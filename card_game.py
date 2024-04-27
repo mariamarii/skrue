@@ -1,5 +1,5 @@
 import tkinter as tk
-from player import Player
+from player import Player, Computer
 from gui import GUI
 import random
 
@@ -11,12 +11,17 @@ class CardGame:
         self.root = tk.Tk()
 
         self.player1 = Player(self.numbers)
-        self.player2 = Player(self.numbers)
+        self.computer = Computer(self.numbers)
 
-        self.gui = GUI(self.root, self, self.player1, self.player2)
+        self.gui = GUI(self.root, self, self.player1, self.computer)
 
         self.labels_p1 = self.gui.create_labels(self.player1.pick_numbers(), 650, show_back=True)
-        self.labels_p2 = self.gui.create_labels(self.player2.pick_numbers(), 50)
+        self.labels_p2 = self.gui.create_labels(self.computer.pick_numbers(), 50)
+        self.computer.computerSeen.append((0,self.computer.cards[0]))
+        self.computer.computerSeen.append((1,self.computer.cards[1]))
+        self.computer.computerSeen.append((2,10))
+        self.computer.computerSeen.append((3,10))
+
 
 
     def run(self):

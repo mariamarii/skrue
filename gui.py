@@ -1,12 +1,16 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+import time
 
 class GUI:
     def __init__(self, root,card_game,player1,player2):
         self.root = root
         self.card_game=card_game
         self.player1 = player1
-        self.player2 = player2
+        self.computer = player2
+        self.deck=0
+        self.deckLabel=None
+        self.pile_labels=[]
         self.root.title("Card Game")
         self.root.geometry("1500x1024")
         self.root.resizable(width=False, height=False)
@@ -28,11 +32,7 @@ class GUI:
 
         self.game_started = False
 
-        self.deck_labels = []
-        for i in range(8):
-            label = tk.Label(self.root, image=self.back_image)
-            label.place(x=1200, y=300 + i * 5)  # Adjust the y-coordinate to stack the cards
-            self.deck_labels.append(label)
+
 
         self.labels_p1 = []  # Initialize empty list to store player 1 labels
         self.labels_p2 = []  # Initialize empty list to store player 2 labels
@@ -41,9 +41,12 @@ class GUI:
 
     def start_game(self):
         self.game_started = True
+        self.draw_pile()
         self.start_button.place_forget()
         self.flip_back_player1(self.labels_p1)
         self.draw_card()
+        self.root.after(3000, self.computer.exchangeCard,self.deck, self.deckLabel)
+
 
     def create_labels(self, numbers, y, show_back=False):
         start_x = (1500 - (len(numbers) * 150)) // 2
@@ -73,9 +76,21 @@ class GUI:
 
     def draw_card(self):
         if self.card_game.numbers:
-            random_value = self.card_game.numbers.pop()
-            card_image = ImageTk.PhotoImage(Image.open(f"img/{random_value}.gif").resize((110, 150)))
-            card_label = tk.Label(self.root, image=card_image)
-            card_label.image = card_image
-            card_label.place(x=675, y=375)
-            self.drawn_cards.append(card_label)
+            self.deck = self.card_game.numbers.pop()
+            card_image = ImageTk.PhotoImage(Image.open(f"img/{self.deck}.gif").resize((110, 150)))
+            self.deckLabel = tk.Label(self.root, image=card_image)
+            self.deckLabel.image = card_image
+            self.deckLabel.place(x=675, y=375)
+            self.drawn_cards.append(self.deckLabel)
+
+
+    def draw_pile(self):
+        x_start = 200  # Starting x position
+        y_start = 300  # Starting y position
+        angle_step = -2  # Angle step for fan effect
+
+        for i in range(8):
+            card_label = tk.Label(self.root, image=self.back_image, bd=0, highlightthickness=0)
+            card_label.place(x=x_start + i * angle_step, y=y_start - i * angle_step)
+            self.pile_labels.append(card_label)
+
