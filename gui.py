@@ -1,27 +1,12 @@
 import tkinter as tk
 from PIL import Image, ImageTk
-import random
-
-# Global list containing the numbers
-numbers = (list(range(1, 11)) * 4 + list(range(11, 15)) * 2)
-random.shuffle(numbers)
-
-class Player:
-    def __init__(self):
-        self.cards = []
-
-    def pick_numbers(self):
-        self.cards = [numbers.pop() for _ in range(4)]
-        return self.cards
-
-class Card:
-    def __init__(self, value):
-        self.value = value
 
 class GUI:
-    def __init__(self, root, player):
+    def __init__(self, root,card_game,player1,player2):
         self.root = root
-        self.player = player
+        self.card_game=card_game
+        self.player1 = player1
+        self.player2 = player2
         self.root.title("Card Game")
         self.root.geometry("1500x1024")
         self.root.resizable(width=False, height=False)
@@ -36,7 +21,7 @@ class GUI:
         self.background_label = tk.Label(self.root, image=self.background_photo)
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.back_image = ImageTk.PhotoImage(Image.open("img/cardback.gif").resize((120, 140)))
+        self.back_image = ImageTk.PhotoImage(Image.open("img/cardback.gif").resize((110, 150)))
 
         self.start_button = tk.Button(self.root, text="Start", command=self.start_game)
         self.start_button.place(x=700, y=500)
@@ -65,7 +50,7 @@ class GUI:
         labels = []
         for i, num in enumerate(numbers):
             if i >= 2 and show_back:
-                card_image = ImageTk.PhotoImage(Image.open(f"img/{num}.gif").resize((120, 140)))
+                card_image = ImageTk.PhotoImage(Image.open(f"img/{num}.gif").resize((110, 150)))
             else:
                 card_image = self.back_image
 
@@ -87,30 +72,10 @@ class GUI:
             label.config(image=self.back_image)
 
     def draw_card(self):
-        if numbers:
-            random_value = numbers.pop()
-            card_image = ImageTk.PhotoImage(Image.open(f"img/{random_value}.gif").resize((120, 140)))
+        if self.card_game.numbers:
+            random_value = self.card_game.numbers.pop()
+            card_image = ImageTk.PhotoImage(Image.open(f"img/{random_value}.gif").resize((110, 150)))
             card_label = tk.Label(self.root, image=card_image)
             card_label.image = card_image
             card_label.place(x=675, y=375)
             self.drawn_cards.append(card_label)
-
-class CardGame:
-    def __init__(self):
-        self.root = tk.Tk()
-
-        self.player1 = Player()
-        self.player2 = Player()
-
-        self.gui = GUI(self.root, self.player1)
-
-        self.labels_p1 = self.gui.create_labels(self.player1.pick_numbers(), 650, show_back=True)
-        self.labels_p2 = self.gui.create_labels(self.player2.pick_numbers(), 50)
-
-
-    def run(self):
-        self.root.mainloop()
-
-if __name__ == "__main__":
-    game = CardGame()
-    game.run()
