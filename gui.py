@@ -6,9 +6,8 @@ class GUI:
     def __init__(self, root,card_game,player1,player2):
         self.root = root
         self.card_game=card_game
-        self.player1 = player1
+        self.player = player1
         self.computer = player2
-        self.deck=0
         self.deckLabel=None
         self.pile_labels=[]
         self.root.title("Card Game")
@@ -45,7 +44,10 @@ class GUI:
         self.start_button.place_forget()
         self.flip_back_player1(self.labels_p1)
         self.draw_card()
-        self.root.after(3000, self.computer.exchangeCard,self.deck, self.deckLabel)
+        self.root.after(3000, self.perform_exchange_card)
+        self.IsPileClicked()
+
+
 
 
     def create_labels(self, numbers, y, show_back=False):
@@ -57,12 +59,17 @@ class GUI:
             else:
                 card_image = self.back_image
 
-            label = tk.Label(self.root, image=card_image)
-            label.image = card_image
-            label.place(x=start_x + i * 150, y=y)
-            labels.append(label)
+            my_label = tk.Label(self.root, image=card_image)
+            my_label.image = card_image
+            my_label.place(x=start_x + i * 150, y=y)
+            labels.append(my_label)
+            if(show_back):
+                my_label.bind("<Button-1>", lambda event, label=my_label, index=i: self.player.on_player_cards_click(index))
+                self.player.deck=self.player.test()
 
-        # Store the labels in the appropriate attribute
+
+
+    # Store the labels in the appropriate attribute
         if y == 650:
             self.labels_p1 = labels
         elif y == 50:
@@ -76,9 +83,11 @@ class GUI:
 
     def draw_card(self):
         if self.card_game.numbers:
-            self.deck = self.card_game.numbers.pop()
-            card_image = ImageTk.PhotoImage(Image.open(f"img/{self.deck}.gif").resize((110, 150)))
+            self.player.deck = self.card_game.numbers.pop()
+            card_image = ImageTk.PhotoImage(Image.open(f"img/{self.player.deck}.gif").resize((110, 150)))
             self.deckLabel = tk.Label(self.root, image=card_image)
+            self.deckLabel.bind("<Button-1>", lambda event: self.player.deckCardCliked(self.deckLabel, self.player.deck))
+
             self.deckLabel.image = card_image
             self.deckLabel.place(x=675, y=375)
             self.drawn_cards.append(self.deckLabel)
@@ -94,3 +103,8 @@ class GUI:
             card_label.place(x=x_start + i * angle_step, y=y_start - i * angle_step)
             self.pile_labels.append(card_label)
 
+    def perform_exchange_card(self):
+        self.player.deck = self.computer.exchangeCard(self.deckLabel, self.player.deck)
+
+    def IsPileClicked(self):
+        self.pile_labels[-1].bind("<Button-1>", lambda event, label=self.pile_labels[-1]: self.player.drawsFromPile(label,self.deckLabel,self.player.deck))
