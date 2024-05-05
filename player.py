@@ -21,8 +21,8 @@ class Player:
 
     def on_player_cards_click(self, button_player_index):
 
-        global Player_card_clicked
-        Player_card_clicked = 1
+        # global Player_card_clicked
+        # Player_card_clicked = 1
         # switch images of two buttons
         if self.deck_card_clicked == True:
             # get the value of card of player cards that player click on it
@@ -41,7 +41,7 @@ class Player:
 
 
             self.deck_card_clicked = False
-            Player_card_clicked = 0
+           # Player_card_clicked = 0
 
 
     def test(self):
@@ -60,42 +60,45 @@ class Computer(Player):
     def exchangeCard(self,deckLabel,deckCard):
         self.deck=deckCard
         self.deckLabel=deckLabel
-        max_value = max(t[1] for t in self.computerSeen)
+        max_value = max(self.computerSeen, key=lambda t: t[1])
 
-        if (self.deck < 5 and self.deck < int(max_value)) or (self.deck < max_value):
-            self.computerImage=ImageTk.PhotoImage(Image.open(f"img/{max_value}.gif").resize((110, 150)))
+
+        if (self.deck < 5 and self.deck < int(max_value[1])) or (self.deck < max_value[1]):
+
+            self.computerImage=ImageTk.PhotoImage(Image.open(f"img/{self.cards[max_value[0]]}.gif").resize((110, 150)))
             deckLabel.config(image=self.computerImage)
             temp =self.deck
-            self.deck=max_value
-            index = None
-            for i, t in enumerate(self.computerSeen):
-                if t[1] == max_value:
-                    index = t[0]
-                    self.computerSeen[i] = (t[0], temp)
-            self.cards[index]=temp
+            self.deck=self.cards[max_value[0]]
+            #index = None
+            # for i, t in enumerate(self.computerSeen):
+            #     if t[1] == max_value:
+            #         index = t[0]
+            #         self.computerSeen[i] = (t[0], temp)
+            self.computerSeen[max_value[0]]=temp
+            self.cards[max_value[0]]=temp
 
 
 
         else:
             pilepopped=self.numbers.pop(0)
-            if (pilepopped < 5 and pilepopped < max_value) or (pilepopped < max_value):
+            if (pilepopped < 5 and pilepopped < max_value[1]) or (pilepopped < max_value[1]):
 
                 #insert front
-                self.numbers.insert(0,self.deck)
-                index = 0
-                for i, t in enumerate(self.computerSeen):
-                    if t[1] == max_value:
-                        index = t[0]
-                        self.computerSeen[i] = (t[0], pilepopped)
-                self.computerImage=ImageTk.PhotoImage(Image.open(f"img/{self.cards[index]}.gif").resize((110, 150)))
+                self.numbers.appened(self.deck)
+                # index = 0
+                # for i, t in enumerate(self.computerSeen):
+                #     if t[1] == max_value:
+                #         index = t[0]
+                self.computerSeen[max_value[0]] = (max_value[0], pilepopped)
+                self.computerImage=ImageTk.PhotoImage(Image.open(f"img/{self.cards[max_value[0]]}.gif").resize((110, 150)))
                 self.deckLabel.config(image=self.computerImage)
-                self.deck=self.cards[index]
-                self.cards[index]=pilepopped
+                self.deck=self.cards[max_value[0]]
+                self.cards[max_value[0]]=pilepopped
 
             else:
                 self.computerImage=ImageTk.PhotoImage(Image.open(f"img/{pilepopped}.gif").resize((110, 150)))
                 self.deckLabel.config(image=self.computerImage)
-                self.numbers.append(self.deck)
+                self.numbers.appened(self.deck)
                 self.deck=pilepopped
 
         return self.deck
