@@ -67,7 +67,7 @@ class GUI:
             my_label.place(x=start_x + i * 150, y=y)
             labels.append(my_label)
             if(show_back):
-                my_label.bind("<Button-1>", lambda event, index=i: self.player.on_player_cards_click(index))
+                my_label.bind("<Button-1>", lambda event, index=i: self.player.on_player_cards_click(index, self.root))
                 self.player.deck = self.player.test()
 
         # Store the labels in the appropriate attribute
@@ -101,12 +101,13 @@ class GUI:
         for i in range(8):
             card_label = tk.Label(self.root, image=self.back_image, bd=0, highlightthickness=0)
             card_label.place(x=x_start + i * angle_step, y=y_start - i * angle_step)
+            card_label.bind("<Button-1>", lambda event, label=card_label: self.player.pileCardClicked(self.root, self.deckLabel))
             self.pile_labels.append(card_label)
 
     def perform_exchange_card(self):
         if get_round_counter() % 2 != 0:
             while get_round_counter() % 2 != 0:
-                self.player.deck = self.computer.exchangeCard(self.deckLabel, self.player.deck)
+                self.player.deck, self.labels_p2 = self.computer.exchangeCard(self.deckLabel, self.player.deck, self.labels_p2, self.back_image)
                 self.root.update()
                 time.sleep(3)
 
