@@ -25,7 +25,7 @@ class GUI:
         # Create a label to display the background image
         self.background_label = tk.Label(self.root, image=self.background_photo)
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
-
+        self.player_card=[]
         self.back_image = self.round_corners("img/cardback.gif", 10)
 
         self.start_button = tk.Button(self.root, text="Start", command=self.start_game)
@@ -56,6 +56,7 @@ class GUI:
     def create_labels(self, numbers, y, show_back=False):
         start_x = (1500 - (len(numbers) * 150)) // 2
         labels = []
+        self.player_card=numbers
         for i, num in enumerate(numbers):
             if i >= 2 and show_back:
                 card_image = self.round_corners(f"img/{num}.gif", 10)
@@ -71,11 +72,21 @@ class GUI:
                 self.player.deck = self.player.test()
 
         # Store the labels in the appropriate attribute
-        if y == 650:
-            self.labels_p1 = labels
-        elif y == 50:
-            self.labels_p2 = labels
-
+        self.labels_p1 = labels
+        return labels
+    def create_labels_com(self, numbers, y, show_back=False):
+        start_x = (1500 - (len(numbers) * 150)) // 2
+        labels = []
+        for i, num in enumerate(numbers):
+            card_image = self.round_corners("img/cardback.gif", 10)
+            my_label = tk.Label(self.root, image=card_image)
+            my_label.image = card_image
+            my_label.place(x=start_x + i * 150, y=y)
+            labels.append(my_label)
+            my_label.bind("<Button-1>", lambda event, index=i: self.player.on_computer_cards_click(index,numbers, self.root))
+            self.player.deck = self.player.test()
+        # Store the labels in the appropriate attribute
+        self.labels_p2 = labels
         return labels
 
     def flip_back_player1(self, labels):
@@ -107,7 +118,7 @@ class GUI:
     def perform_exchange_card(self):
         if get_round_counter() % 2 != 0:
             while get_round_counter() % 2 != 0:
-                self.player.deck, self.labels_p2 = self.computer.exchangeCard(self.deckLabel, self.player.deck, self.labels_p2, self.back_image)
+                self.player.deck, self.labels_p2 = self.computer.exchangeCard(self.deckLabel, self.player.deck, self.labels_p2, self.back_image,self.root)
                 self.root.update()
                 time.sleep(3)
 

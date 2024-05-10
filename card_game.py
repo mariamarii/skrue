@@ -3,7 +3,7 @@ import tkinter as tk
 
 from tkinter import PhotoImage
 
-from bokeh.models import canvas
+#from bokeh.models import canvas
 
 from gui import GUI
 from player import Player, Computer
@@ -44,8 +44,9 @@ class CardGamePage:
 
 class CardGame:
     def __init__(self, root):
-        self.numbers = (list(range(1, 11)) * 4 + list(range(11, 15)) * 2)
-        self.numbers = self.numbers + [20, 20, 25, 25, -1, -1, -5, -5]
+        #self.numbers = (list(range(1, 11)) * 4 + list(range(11, 15)) * 2)
+        self.numbers = (list(range(1, 11)) * 2+ list(range(13, 15)) * 2)
+        self.numbers = self.numbers + [0 , 0, 20, 20, 25, 25, -1, -5,14,14,14,14,14,14,14,14]
         random.shuffle(self.numbers)
         self.computerSeen = []
         self.playerSeen = []
@@ -55,8 +56,8 @@ class CardGame:
 
         self.gui = GUI(root, self, self.player1, self.computer)
 
-        self.labels_p1 = self.gui.create_labels(self.player1.pick_numbers(), 650, show_back=True)
-        self.labels_p2 = self.gui.create_labels(self.computer.pick_numbers(), 50)
+        self.labels_p1 = self.gui.create_labels(self.player1.pick_numbers_player(), 650, show_back=True)
+        self.labels_p2 = self.gui.create_labels_com(self.computer.pick_numbers(), 50)
         self.computer.computerSeen.append((0, self.computer.cards[0]))
         self.computer.computerSeen.append((1, self.computer.cards[1]))
         self.computer.computerSeen.append((2, 15))
