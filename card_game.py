@@ -44,9 +44,8 @@ class CardGamePage:
 
 class CardGame:
     def __init__(self, root):
-        #self.numbers = (list(range(1, 11)) * 4 + list(range(11, 15)) * 2)
-        self.numbers = (list(range(1, 11)) * 2+ list(range(13, 15)) * 2)
-        self.numbers = self.numbers + [0 , 0, 20, 20, 25, 25, -1, -5,14,14,14,14,14,14,14,14]
+        self.numbers = (list(range(1, 11)) * 4 + list(range(11, 15)) * 2)
+        self.numbers = self.numbers + [0 , 0, 20, 20, 25, 25, -1, -5]
         random.shuffle(self.numbers)
         self.computerSeen = []
         self.playerSeen = []
