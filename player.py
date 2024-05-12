@@ -59,13 +59,13 @@ class Player:
     def on_player_cards_click(self, button_player_index, root):
         self.cards=get_player_cards()
         if self.deck_card_clicked == True and get_round_counter() % 2 == 0 and self.cards[button_player_index]!=183:
-            print('player')
+            #print('player')
             player_card_value = self.cards[button_player_index]
             temp = self.deck
             self.deck = player_card_value
             player_card_value = temp
             self.cards[button_player_index] = player_card_value
-            print(self.cards)
+            #print(self.cards)
             update_player_cards(self.cards)
             self.playerSeen[button_player_index] = (button_player_index, player_card_value)
             self.card_label = ImageTk.PhotoImage(Image.open(f"img/{self.deck}.gif"))
@@ -73,7 +73,7 @@ class Player:
             self.deck_card_clicked = False
             increase_round_counter()
         elif self.pile_card_clicked == True and get_round_counter() % 2 == 0 and self.cards[button_player_index]!=183:  # card exchange
-            print('player2')
+            #print('player2')
             # pile_popped = self.numbers.pop(0)
             self.numbers.append(self.deck)
 
@@ -84,7 +84,7 @@ class Player:
             self.deck = self.cards[button_player_index]
             self.cards[button_player_index] = self.pile_pop_player
             self.playerSeen[button_player_index]=(button_player_index,15)
-            print(self.cards)
+            #print(self.cards)
             update_player_cards(self.cards)
             #self.playerSeen[button_player_index] = (button_player_index, self.deck)
             self.displayPileBack()
@@ -152,7 +152,7 @@ class Player:
             root.after(2000, lambda: self.delay_forget_label(my_label))
 
     def k3b_dayer(self, index,nums, root,y):
-        print("k3b player")
+        #print("k3b player")
         #print(nums)
         if nums[index] != -77 and nums[index] != 183:
             start_x = (1500 - (len(self.cards) * 150)) // 2
@@ -163,29 +163,30 @@ class Player:
             root.after(2000, lambda: self.delay_forget_label(my_label))
 
     def khod_w_hat(self,player_index,computer_index):
-        print("khod player")
+        #print("khod player")
         computer_card=get_computer_cards()
         player_card=get_player_cards()
         if computer_card[computer_index] != -77 and player_card[player_index] != 183:
+            #print(player_card)
+            #print(computer_card)
             temp=self.playerSeen[player_index]
             self.playerSeen[player_index] = (player_index, self.computerSeen[computer_index][1])
             self.computerSeen[computer_index] = (computer_index, temp[1])
-
+            temp2=player_cards[player_index]
             self.cards[player_index] = computer_card[computer_index]
-            #computer_card[computer_index] = player_card[player_index]
-            computer_card[computer_index] = self.computerSeen[computer_index][1]
+            computer_card[computer_index] = temp2
 
             # Swap the cards between player and computer at the specified indexes
             update_computer_cards(computer_card)
-            print(self.cards)
+            #print(self.cards)
             update_player_cards(self.cards)
             # Update playerSeen and computerSeen with the swapped card values
-            print(self.computerSeen[computer_index])
-            print(get_computer_cards())
-            print(get_player_cards())
+           # print(self.computerSeen[computer_index])
+            #print(get_computer_cards())
+            #print(get_player_cards())
 
     def basra(self,index,root):
-        print("basra player")
+        #print("basra player")
         start_x = (1500 - (len(self.cards) * 150)) // 2
         card_image = ImageTk.PhotoImage(Image.open("img/out.gif"))
         my_label = tk.Label(root, image=card_image)
@@ -197,7 +198,7 @@ class Player:
         self.deckLabel.config(image=self.card_label)
         self.playerSeen[index] = (index,183)
         self.cards[index] = 183
-        print((self.cards))
+        #print((self.cards))
         update_player_cards(self.cards)
 
     def see_swap(self,player_index,computer_index,root):
@@ -225,8 +226,8 @@ class Computer(Player):
         self.cards = get_computer_cards()
         if self.screwCom == True:
             return self.deck, labels_p2, self.screwCom
-        if score(self.computerSeen) < 4 and get_round_counter() > 6:
-            print(score(self.computerSeen))
+        if score(self.computerSeen) < 4 and get_round_counter() > 5:
+           # print(score(self.computerSeen))
             self.screwCom = True
             #increase_round_counter()
             return self.deck, labels_p2, self.screwCom
@@ -242,9 +243,9 @@ class Computer(Player):
         max_value_player = max(filtered_tuples, key=lambda t: t[1])
         min_value_player = min(self.playerSeen, key=lambda t: t[1])
         if get_round_counter() % 2 != 0:
-            print('computer')
-            print(self.computerSeen)
-            print(self.playerSeen)
+           # print('computer')
+           # print(self.computerSeen)
+           # print(self.playerSeen)
             self.cards = get_computer_cards()
 
             if (self.deck < 5 and self.deck < int(max_value[1])) or (self.deck < max_value[1]):
@@ -281,7 +282,7 @@ class Computer(Player):
                         card=get_player_cards()
                         self.playerSeen[max_value_player[0]] = (max_value_player[0],card[max_value_player[0]])
                     elif self.deck ==11:
-                        print("k3b computer")
+                        #print("k3b computer")
                         card = get_player_cards()
                         self.playerSeen[max_value_player[0]] = (max_value_player[0], card[max_value_player[0]])
                         self.computerSeen[max_value[0]] = (max_value[0], self.cards[max_value[0]])
@@ -302,7 +303,7 @@ class Computer(Player):
                         update_computer_cards(self.cards)
                         update_player_cards(card)
                     elif self.deck == 13:
-                        print("basra comp")
+                       # print("basra comp")
                         start_x = (1500 - (len(self.cards) * 150)) // 2
                         card_image = ImageTk.PhotoImage(Image.open("img/out.gif"))
                         my_label = tk.Label(root, image=card_image)
