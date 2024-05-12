@@ -7,6 +7,11 @@ from tkinter import PhotoImage
 
 from gui import GUI
 from player import Player, Computer
+import pygame.mixer
+from pygame.mixer import Sound
+
+
+pygame.mixer.init()
 
 
 class CardGamePage:
@@ -14,10 +19,14 @@ class CardGamePage:
         self.root = tk.Tk()
         self.current_frame = None
         self.root.geometry("1500x1024")
-        self.root.resizable(False, False)  # Disable window resizing
+        self.root.resizable(False, False)
+        self.clickSound = Sound("sounds/click.wav")# Disable window resizing
         self.show_start_page()
 
+
+
     def show_start_page(self):
+        self.clickSound.play()
         if self.current_frame:
             self.current_frame.destroy()
 
@@ -25,6 +34,7 @@ class CardGamePage:
         self.current_frame.pack(fill=tk.BOTH, expand=True)
 
     def show_card_game(self):
+        self.clickSound.play()
         if self.current_frame:
             self.current_frame.destroy()
 
@@ -32,6 +42,7 @@ class CardGamePage:
         self.current_frame.run()
 
     def show_how_to_play(self):
+        self.clickSound.play()
         if self.current_frame:
             self.current_frame.destroy()
 
@@ -49,6 +60,7 @@ class CardGame:
         random.shuffle(self.numbers)
         self.computerSeen = []
         self.playerSeen = []
+
 
         self.player1 = Player(self.numbers, self.playerSeen, self.computerSeen)
         self.computer = Computer(self.numbers, self.playerSeen, self.computerSeen,root)

@@ -4,6 +4,11 @@ from tkinter import messagebox
 
 from PIL import Image, ImageTk, ImageDraw
 from player import increase_round_counter, get_round_counter
+import pygame.mixer
+from pygame.mixer import Sound
+
+
+pygame.mixer.init()
 
 
 class GUI:
@@ -23,6 +28,11 @@ class GUI:
         self.lastRound = -1
         self.score_computer = 0
         self.score_player = 0
+        self.screwSound = Sound("sounds/screw.wav")
+        self.winSound=Sound("sounds/win.wav")
+        self.loseSound=Sound("sounds/lose.wav")
+        self.clickSound=Sound("sounds/click.wav")
+
         #self.root.configure(bg='#000fff000')  # change color
 
         # Load and resize background image
@@ -48,6 +58,7 @@ class GUI:
         self.drawn_cards = []
 
     def start_game(self):
+        self.clickSound.play()
         self.game_started = True
         self.draw_pile()
         self.start_button.place_forget()
@@ -62,9 +73,14 @@ class GUI:
         if self.screwCom == 1 and get_round_counter() % 2 != 0:
             self.endGame()
             if self.score_player < self.score_computer:
+                self.winSound.play()
                 messagebox.showinfo("Screw", "Congratulations!\n you won")
+
+
             else:
+                self.loseSound.play()
                 messagebox.showinfo("Screw", " you lost :( \n loser!")
+
             return
         if get_round_counter() > 4 and self.screw_flag == 0 and not self.screwCom:
             self.screw()
@@ -78,8 +94,10 @@ class GUI:
         if self.screw_flag == 1 and get_round_counter() % 2 == 0:
             self.endGame()
             if self.score_player < self.score_computer:
+                self.winSound.play()
                 messagebox.showinfo("Screw", "Congratulations!\n you won")
             else:
+                self.loseSound.play()
                 messagebox.showinfo("Screw", " you lost :( \n loser!")
             return
         self.root.after(1000, self.continuous_exchange_card)
@@ -192,6 +210,7 @@ class GUI:
         self.screw_button.config(activebackground="#E5A82E")
 
     def screw_action(self):
+        self.screwSound.play()
         if not self.screwCom:
             self.screw_flag = 1
         self.screwCom = True

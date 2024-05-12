@@ -1,7 +1,12 @@
-from PIL import Image, ImageTk
-import tkinter as tk
-#from gui import GUI
 
+import tkinter as tk
+
+import pygame
+import pygame.mixer
+from pygame.mixer import Sound
+from PIL import Image, ImageTk
+
+pygame.mixer.init()
 class Player:
     def __init__(self, numbers, playerSeen, computerSeen):
         self.cards = []
@@ -17,6 +22,11 @@ class Player:
         self.pileLabel = None
         self.pile_card_clicked = False
         self.actual_player_card=[]
+        self.draw_card_sound = Sound("sounds/draw.wav")
+        self.put_card_sound = Sound("sounds/put.wav")
+        self.flip_card_sound = Sound("sounds/flip.wav")
+
+
 
     def pick_numbers(self):
         self.cards = [self.numbers.pop() for _ in range(4)]
@@ -28,6 +38,7 @@ class Player:
         update_player_cards(self.cards)
         return self.cards
     def deckCardCliked(self, deckLabel, deck):
+        self.draw_card_sound.play()
         self.deckLabel = deckLabel
         self.deck = deck
         self.deck_card_clicked = True
@@ -37,13 +48,16 @@ class Player:
         self.pile_card_clicked = False
 
     def pileCardClicked(self, root, deckLabel):
+        self.draw_card_sound.play()
         self.deckLabelGUI = deckLabel
         if self.pile_card_clicked == False:
             self.displayPileCard(root)
         self.pile_card_clicked = True
 
 
-    def displayPileCard(self, root):  # Display the drawn pile card briefly
+    def displayPileCard(self, root):
+        # Display the drawn pile card briefly
+
         self.pile_pop_player = self.numbers.pop(0)
         self.pile_card_image = ImageTk.PhotoImage(Image.open(f"img/{self.pile_pop_player}.gif"))
         x_start = 330  # Starting x position
@@ -57,6 +71,7 @@ class Player:
         self.pileLabel.place_forget()
 
     def on_player_cards_click(self, button_player_index, root):
+        self.flip_card_sound.play()
         self.cards=get_player_cards()
         if self.deck_card_clicked == True and get_round_counter() % 2 == 0 and self.cards[button_player_index]!=183:
             #print('player')
@@ -127,6 +142,7 @@ class Player:
             increase_round_counter()
 
     def on_computer_cards_click(self, button_computr_index, nums,root):
+        self.flip_card_sound.play()
         if self.deck ==9 or self.deck ==10 :
             self.Bos_f_wr2t_8erk(button_computr_index, nums, root)
             increase_round_counter()
@@ -219,6 +235,7 @@ class Computer(Player):
         self.root = root
 
     def exchangeCard(self, deckLabel, deckCard, labels_p2, backcard,root):
+        self.put_card_sound.play()
 
         
         self.deck = deckCard
