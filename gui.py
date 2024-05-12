@@ -1,21 +1,25 @@
 import time
 import tkinter as tk
-
+from tkinter import messagebox
 
 from PIL import Image, ImageTk, ImageDraw
 from player import increase_round_counter, get_round_counter
 
 class GUI:
     def __init__(self, root, card_game, player1, player2):
+        self.screw_flag = 0
+        self.screw_button = None
         self.root = root
         self.card_game = card_game
         self.player = player1
         self.computer = player2
         self.deckLabel = None
         self.pile_labels = []
+        self.screwCom = False
         self.root.title("Card Game")
         self.root.geometry("1500x1024")
         self.root.resizable(width=False, height=False)
+        self.lastRound = -1
         #self.root.configure(bg='#000fff000')  # change color
 
         # Load and resize background image
@@ -28,8 +32,9 @@ class GUI:
         self.player_card=[]
         self.back_image = self.round_corners("img/cardback.gif", 10)
 
-        self.start_button = tk.Button(self.root, text="Start", command=self.start_game)
-        self.start_button.place(x=700, y=500)
+        self.start_button = tk.Button(self.root, text="Start", command=self.start_game, bg="#E3BA5C", fg="white", font=("Comic Sans MS", 14))
+        self.start_button.place(x=700, y=420)
+        self.start_button.config(activebackground="#E5A82E")
 
         self.game_started = False
 
@@ -46,12 +51,20 @@ class GUI:
         self.draw_card()
         #time.sleep(2)
         self.perform_exchange_card()  # Call once initially
-        self.continuous_exchange_card()  # Schedule continuous calling
+        self.continuous_exchange_card()
+        #self.screw()# Schedule continuous calling
 
     def continuous_exchange_card(self):
+        if get_round_counter() > 5 and self.screw_flag == 0:
+            self.screw()
         if get_round_counter() % 2 != 0:
             self.perform_exchange_card()
+            if self.screwCom == True:
+                self.endGame()
+                self.screw_action()
+                #self.endGame()
         self.root.after(1000, self.continuous_exchange_card)
+        #self.endGame()
 
     def create_labels(self, numbers, y, show_back=False):
         start_x = (1500 - (len(numbers) * 150)) // 2
@@ -118,9 +131,10 @@ class GUI:
     def perform_exchange_card(self):
         if get_round_counter() % 2 != 0:
             while get_round_counter() % 2 != 0:
-                self.player.deck, self.labels_p2 = self.computer.exchangeCard(self.deckLabel, self.player.deck, self.labels_p2, self.back_image,self.root)
+                self.player.deck, self.labels_p2, self.screwCom = self.computer.exchangeCard(self.deckLabel, self.player.deck, self.labels_p2, self.back_image,self.root)
                 self.root.update()
                 time.sleep(3)
+
 
     def round_corners(self,image_path, radius):
         # Open the image using PIL
@@ -143,3 +157,56 @@ class GUI:
         img = ImageTk.PhotoImage(rounded_image)
 
         return img
+
+    def screw(self):
+        self.screw_button = tk.Button(self.root, text="Screw", command=self.screw_action, bg="#E3BA5C", fg="white", font=("Comic Sans MS", 14))
+        self.screw_button.place(x=165, y=530, width=150, height=40)
+        self.screw_button.config(activebackground="#E5A82E")
+
+    def screw_action(self):
+        self.screw_flag = 1
+        increase_round_counter()
+        self.screw_button.config(text="Screwed", state=tk.DISABLED)
+        self.lastRound = get_round_counter()
+
+    def endGame(self):
+        if get_round_counter() - self.lastRound < get_round_counter():
+            self.flipResult()
+            self.disable_deck_and_pile_buttons()
+            # messagebox.showinfo("Screw", "You have clicked the Screw button!")
+
+
+    def flipResult(self):
+        print(self.player.cards)
+        print(self.computer.cards)
+        for i in range(0, 4):
+            # Load the image
+            if self.player.cards != -77:
+                card_image = self.round_corners(f"img/{self.player.cards[i]}.gif", 10)
+                # Configure the label with the new image
+                self.labels_p1[i].config(image=card_image)
+                self.labels_p1[i].image = card_image
+                self.labels_p1[i].unbind("<Button-1>")# Keep a reference to prevent garbage collection
+
+        for i in range(0, 4):
+            # Load the image
+            if self.player.cards != 183:
+                card_image = self.round_corners(f"img/{self.computer.cards[i]}.gif", 10)
+                # Configure the label with the new image
+                self.labels_p2[i].config(image=card_image)
+                self.labels_p2[i].image = card_image
+                self.labels_p2[i].unbind("<Button-1>")
+
+
+    def disable_deck_and_pile_buttons(self):
+        # Disable the deck button and unbind its events
+        if self.deckLabel:
+            self.deckLabel.unbind("<Button-1>")
+
+        # Disable the pile buttons and unbind their events
+        for label in self.pile_labels:
+            label.unbind("<Button-1>")
+
+    # def score(self):
+
+

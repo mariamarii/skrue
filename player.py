@@ -214,17 +214,27 @@ class Player:
 class Computer(Player):
     def __init__(self, numbers, playerSeen, computerSeen, root):
         super().__init__(numbers, playerSeen, computerSeen)
+        self.screwCom = False
         self.root = root
 
     def exchangeCard(self, deckLabel, deckCard, labels_p2, backcard,root):
+
+        
         self.deck = deckCard
         self.deckLabel = deckLabel
         self.cards = get_computer_cards()
+        if self.screwCom == True:
+            return self.deck, labels_p2, self.screwCom
+        if score(self.computerSeen) < 4 and get_round_counter() > 6:
+            print(score(self.computerSeen))
+            self.screwCom = True
+            #increase_round_counter()
+            return self.deck, labels_p2, self.screwCom
 
         # Check if computerSeen contains tuples
         if not all(isinstance(item, tuple) for item in self.computerSeen):
             print("Error: computerSeen does not contain tuples")
-            return self.deck, labels_p2
+            return self.deck, labels_p2, self.screwCom
 
         # Find maximum value from computerSeen
         max_value = max(self.computerSeen, key=lambda t: t[1])
@@ -309,7 +319,7 @@ class Computer(Player):
 
             increase_round_counter()
             self.root.after(2000, lambda: self.reset_background(labels_p2, self.index, backcard))
-        return self.deck, labels_p2
+        return self.deck, labels_p2, self.screwCom
 
     def reset_background(self, labels, index, backcard):
         labels[index].config(background="white")  # Reset background color to default
@@ -335,6 +345,16 @@ def update_computer_cards(cards):
 def get_computer_cards():
     #global player_cards
     return computer_cards
+def score(cards):
+    sum = 0
+    for i in range(0, 4):
+        if cards[i][1] != 183 and cards[i][1] != -77:
+            if cards[i][1] > 10 and cards[i][1] < 15:
+                sum = sum + 10
+            else:
+                sum = sum + cards[i][1]
+    return sum
+
 
 # Initialize the counter outside the function
 round_counter = 0

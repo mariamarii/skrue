@@ -103,11 +103,61 @@ class HowToPlayPage(tk.Frame):
         super().__init__(parent)
         self.controller = controller
 
-        label = tk.Label(self, text="How to Play Page")
-        label.pack(pady=10, padx=10)
+        # Load background image
+        self.bg_image = tk.PhotoImage(file="img/how to play back.gif")
 
-        button = tk.Button(self, text="Back to Start Page", command=lambda: controller.show_start_page(), font=("Arial", 14))
-        button.pack()
+        # Create Canvas widget to hold the background image
+        self.canvas = tk.Canvas(self, width=1500, height=1024)
+        self.canvas.pack(fill="both", expand=True)
+
+        # Place the background image on the canvas
+        self.canvas.create_image(0, 0, image=self.bg_image, anchor="nw")
+
+        # Write text on the background image
+        self.canvas.create_text(750, 400, text="""
+        Game system:
+
+        It is to get the smallest number of numbers, and each player at the playing table starts with two face-up cards,
+        then a field of cards is placed in the half from which the players draw in order from right to left.
+        The method of the game consists of three draws or more until one of the players says (Screw).
+
+        Each player chooses one of three options:
+
+        1- It is withdrawn from the pile of cards, then it is decided whether to keep it or dispose of it on the deck.
+        2- Or he draws from the deck the last card left by the player before him in a way that helps him win.
+
+        Auxiliary cards to play:
+        
+        Card No. 7 or  8: You look at only one of your cards
+        Card No. 9 or 10: You look at only one card from one of the players.
+        
+        The following cards: If you have them when the game ends, they will be +10.
+        
+        khod w hat card: You replace a card from one of the players with a card of your own without looking at the cards.
+        k3b dair card: You look at one card from each player, including a card from your own.
+        Basra card: With this card, you can get rid of one of your cards by your choice.
+        See swap: You replace a card from one of the players with a card of your own and you can see the card you took.
+        Warning: In order to be able to use these cards, they must be drawn from the pile.
+
+        Game over:
+        The player who clicks “Screw” does not play the turn, then everyone plays until the turn is reached, 
+        then the cards are revealed, and the player with the lowest number is the winner.
+        """, font=("Comic Sans MS", 14), fill="white", justify="center")
+
+        # Back button
+        button = tk.Button(self.canvas, text="Back", command=lambda: controller.show_start_page(), font=("Comic Sans MS", 10), bg="white")
+        button.place(x=20, y=20)
+        button.config(activebackground="#E2E1E0")
+
+        # Update the canvas to ensure proper scrolling behavior
+        self.canvas.update_idletasks()
+        self.canvas.config(scrollregion=self.canvas.bbox("all"))
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
