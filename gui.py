@@ -75,7 +75,9 @@ class GUI:
             if self.score_player < self.score_computer:
                 self.winSound.play()
                 messagebox.showinfo("Screw", "Congratulations!\n you won")
-
+            elif self.score_player == self.score_computer:
+                self.winSound.play()
+                messagebox.showinfo("Screw", "you two tied!\n")
 
             else:
                 self.loseSound.play()
