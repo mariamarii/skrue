@@ -42,7 +42,6 @@ class Player:
         self.deckLabel = deckLabel
         self.deck = deck
         self.deck_card_clicked = True
-
         if self.pile_card_clicked == True:
             self.exchangeCardPlayer()
         self.pile_card_clicked = False
@@ -50,6 +49,7 @@ class Player:
     def pileCardClicked(self, root, deckLabel):
         self.draw_card_sound.play()
         self.deckLabelGUI = deckLabel
+
         if self.pile_card_clicked == False:
             self.displayPileCard(root)
         self.pile_card_clicked = True
@@ -57,7 +57,6 @@ class Player:
 
     def displayPileCard(self, root):
         # Display the drawn pile card briefly
-
         self.pile_pop_player = self.numbers.pop(0)
         self.pile_card_image = ImageTk.PhotoImage(Image.open(f"img/{self.pile_pop_player}.gif"))
         x_start = 330  # Starting x position
@@ -105,27 +104,33 @@ class Player:
             self.displayPileBack()
             self.pile_card_clicked=False
             increase_round_counter()
-        elif self.deck == 7 or self.deck == 8 :
+
+        elif (self.deck == 7 or self.deck == 8) and get_player_flag()==1:
             self.Bos_f_wr2tk(button_player_index, root)
             root.after(2000, lambda: increase_round_counter())
-        elif self.deck == 11:
+
+        elif self.deck == 11  and get_player_flag()==1:
             card =get_player_cards()
             self.k3b_dayer(button_player_index,card,root,500)
-        elif self.deck == 12 or self.deck == 14:
+
+        elif (self.deck == 12 or self.deck == 14 ) and get_player_flag()==1:
             self.ind=button_player_index
-        elif self.deck == 13:
+
+        elif self.deck == 13 and get_player_flag()==1:
             self.basra(button_player_index,root)
             increase_round_counter()
 
 
     def Bos_f_wr2tk(self, index, root):
         if self.cards[index] != 183 and self.cards[index]!=-77:
+
             start_x = (1500 - (len(self.cards) * 150)) // 2
             card_image = ImageTk.PhotoImage(Image.open(f"img/{self.cards[index]}.gif"))
             my_label = tk.Label(root, image=card_image)
             my_label.image = card_image
             my_label.place(x=start_x + index * 150, y=500)
             root.after(2000, lambda: self.delay_forget_label(my_label))
+
 
 
     def delay_forget_label(self, label):
@@ -138,21 +143,23 @@ class Player:
         self.deck = self.pile_pop_player
         self.displayPileBack()
         self.deck_card_clicked=False
-        if self.deck != 7 and self.deck != 8 and self.deck != 9 and self.deck != 10 and self.deck != 11 and self.deck != 12 and self.deck != 13 and self.deck != 14:
+        if self.deck not in range(7, 15):
             increase_round_counter()
+        else:
+            update_player_flag(1)
 
     def on_computer_cards_click(self, button_computr_index, nums,root):
         self.flip_card_sound.play()
-        if self.deck ==9 or self.deck ==10 :
+        if (self.deck ==9 or self.deck ==10)  and get_player_flag()==1:
             self.Bos_f_wr2t_8erk(button_computr_index, nums, root)
             increase_round_counter()
-        elif self.deck == 11:
+        elif self.deck == 11 and get_player_flag()==1:
             self.k3b_dayer(button_computr_index,nums,root,150)
             increase_round_counter()
-        elif self.deck == 12:
+        elif self.deck == 12  and get_player_flag()==1:
             self.khod_w_hat(self.ind,button_computr_index)
             increase_round_counter()
-        elif self.deck == 14 :
+        elif self.deck == 14  and get_player_flag()==1:
             self.see_swap(self.ind,button_computr_index, root)
             increase_round_counter()
 
@@ -255,6 +262,7 @@ class Computer(Player):
             return self.deck, labels_p2, self.screwCom
 
         # Find maximum value from computerSeen
+        update_player_flag(0)
         max_value = max(self.computerSeen, key=lambda t: t[1])
         filtered_tuples = [(x, y) for (x, y) in self.playerSeen if y < 183]
         max_value_player = max(filtered_tuples, key=lambda t: t[1])
@@ -264,7 +272,6 @@ class Computer(Player):
            # print(self.computerSeen)
            # print(self.playerSeen)
             self.cards = get_computer_cards()
-
             if (self.deck < 5 and self.deck < int(max_value[1])) or (self.deck < max_value[1]):
                 self.computerImage = ImageTk.PhotoImage(Image.open(f"img/{self.cards[max_value[0]]}.gif"))
                 self.index = max_value[0]
@@ -277,6 +284,7 @@ class Computer(Player):
                 update_computer_cards(self.cards)
             else:
                 pile_popped = self.numbers.pop(0)
+
                 if (pile_popped < 5 and pile_popped < max_value[1]) or (pile_popped < max_value[1]):
                     self.numbers.append(self.deck)
                     self.index = max_value[0]
@@ -345,12 +353,14 @@ class Computer(Player):
 
 # Function to increase the round counter
 def increase_round_counter():
-    global round_counter
-    round_counter += 1
+    global round_counter;
+    round_counter += 1;
 
 # Function to get the current value of the round counter
 def get_round_counter():
+    global round_counter
     return round_counter
+
 def update_player_cards(cards):
     global player_cards
     player_cards = cards
@@ -361,8 +371,12 @@ def update_computer_cards(cards):
     global computer_cards
     computer_cards = cards
 def get_computer_cards():
-    #global player_cards
     return computer_cards
+def update_player_flag(f):
+    global playerf
+    playerf = f
+def get_player_flag():
+    return playerf
 def score(cards):
     sum = 0
     for i in range(0, 4):
@@ -378,5 +392,6 @@ def score(cards):
 round_counter = 0
 player_cards=[]
 computer_cards=[]
+playerf=0
 
 
