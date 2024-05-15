@@ -27,8 +27,13 @@ class CardGamePage:
         if self.current_frame:
             self.current_frame.destroy()
 
+
         self.current_frame = StartPage(self.root, self)
         self.current_frame.pack(fill=tk.BOTH, expand=True)
+        if isinstance(self.current_frame, CardGame):
+            # If so, call a method to remove the Screw button
+            self.current_frame.remove_screw_button()
+
 
     def show_card_game(self):
         self.clickSound.play()
@@ -37,6 +42,7 @@ class CardGamePage:
 
         self.current_frame = CardGame(self.root, self)
         self.current_frame.run()
+
 
     def show_how_to_play(self):
         self.clickSound.play()
@@ -59,13 +65,13 @@ class CardGame(tk.Frame):
         random.shuffle(self.numbers)
         self.computerSeen = []
         self.playerSeen = []
-
+        self.card_game_page = controller
         self.player1 = Player(self.numbers, self.playerSeen, self.computerSeen)
         self.computer = Computer(self.numbers, self.playerSeen, self.computerSeen, root)
 
-        self.gui = GUI(root, self, self.player1, self.computer)
+        self.gui = GUI(root, self, self.player1, self.computer,self.card_game_page)
 
-        self.labels_p1 = self.gui.create_labels(self.player1.pick_numbers_player(), 650, show_back=True)
+        self.labels_p1 = self.gui.create_labels(self.player1.pick_numbers_player(), 650)
         self.labels_p2 = self.gui.create_labels_com(self.computer.pick_numbers(), 50)
         self.computer.computerSeen.append((0, self.computer.cards[0]))
         self.computer.computerSeen.append((1, self.computer.cards[1]))
@@ -88,6 +94,9 @@ class CardGame(tk.Frame):
 
     def run(self):
         pass  # The GUI handles the mainloop
+    def remove_screw_button(self):
+        if hasattr(self.controller.gui, 'screw_button'):
+            self.controller.gui.screw_button.destroy()
 
 
 class StartPage(tk.Frame):

@@ -12,7 +12,7 @@ pygame.mixer.init()
 
 
 class GUI:
-    def __init__(self, root, card_game, player1, player2):
+    def __init__(self, root, card_game, player1, player2,card_game_page):
         self.screw_flag = 0
         self.screw_button = None
         self.root = root
@@ -28,6 +28,7 @@ class GUI:
         self.lastRound = -1
         self.score_computer = 0
         self.score_player = 0
+        self.card_game_page = card_game_page
         self.screwSound = Sound("sounds/screw.wav")
         self.winSound=Sound("sounds/win.wav")
         self.loseSound=Sound("sounds/lose.wav")
@@ -104,12 +105,12 @@ class GUI:
             return
         self.root.after(1000, self.continuous_exchange_card)
 
-    def create_labels(self, numbers, y, show_back=False):
+    def create_labels(self, numbers, y):
         start_x = (1500 - (len(numbers) * 150)) // 2
         labels = []
         self.player_card = numbers
         for i, num in enumerate(numbers):
-            if i >= 2 and show_back:
+            if i >= 2 :
                 card_image = self.round_corners(f"img/{num}.gif", 10)
             else:
                 card_image = self.round_corners("img/cardback.gif", 10)
@@ -118,15 +119,14 @@ class GUI:
             my_label.image = card_image
             my_label.place(x=start_x + i * 150, y=y)
             labels.append(my_label)
-            if (show_back):
-                my_label.bind("<Button-1>", lambda event, index=i: self.player.on_player_cards_click(index, self.root))
-                self.player.deck = self.player.test()
+            my_label.bind("<Button-1>", lambda event, index=i: self.player.on_player_cards_click(index, self.root))
+            self.player.deck = self.player.test()
 
         # Store the labels in the appropriate attribute
         self.labels_p1 = labels
         return labels
 
-    def create_labels_com(self, numbers, y, show_back=False):
+    def create_labels_com(self, numbers, y):
         start_x = (1500 - (len(numbers) * 150)) // 2
         labels = []
         for i, num in enumerate(numbers):
